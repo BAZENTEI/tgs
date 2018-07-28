@@ -22,6 +22,7 @@
     <ClInclude Include="bullet.h" />
     <ClInclude Include="enemy.h" />
     <ClInclude Include="fog.h" />
+    <ClInclude Include="gamestage.h" />
     <ClInclude Include="guage.h" />
     <ClInclude Include="state.h" />
     <ClInclude Include="input.h" />
@@ -36,6 +37,7 @@
     <ClCompile Include="bullet.cpp" />
     <ClCompile Include="enemy.cpp" />
     <ClCompile Include="fog.cpp" />
+    <ClCompile Include="gamestage.cpp" />
     <ClCompile Include="input.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="map.cpp" />

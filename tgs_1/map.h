@@ -6,7 +6,7 @@
 #define MAP_SIZE_X				18
 #define MAP_SIZE_Y				13
 
-#define MAP_NUMBER				2
+#define MAP_NUMBER				3
 
 #define MAP_WALL				0x1
 #define MAP_ENEMY				0x2

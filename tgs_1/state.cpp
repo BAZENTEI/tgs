@@ -1,28 +1,36 @@
+
 #include "state.h"
+
 #include "enemy.h"
 #include "fog.h"
+#include "gamestage.h"
 #include "input.h"
 #include "map.h"
 #include "object.h"
 #include "player.h"
 #include "score.h"
 #include "sound.h"
-#include "state.h"
 
-STATE state = GAME_PLAY;
+STATE state = GAME_INTRO;
+
+static LPDIRECTSOUNDBUFFER8 pSoundBuffer = NULL;
+
 
 HRESULT InitState(void)
 {
-	LPDIRECTSOUNDBUFFER8 pSoundBuffer = LoadSound(BGM_00);
+	pSoundBuffer = LoadSound(BGM_00);
 
 	switch (state) {
 	case GAME_INTRO:
-		break;
-	case GAME_PLAY:
+		InitGameStage();
 
 		if (pSoundBuffer) {
 			PlaySound(pSoundBuffer, E_DS8_FLAG_LOOP);
 		}
+
+		break;
+
+	case GAME_PLAY:
 
 		InitMap();
 		InitWall();
@@ -44,8 +52,6 @@ HRESULT InitState(void)
 void UpdateState(void)
 {
 	switch (state) {
-	case GAME_INTRO:
-		break;
 	case GAME_PLAY:
 
 		UpdateMap();
@@ -55,9 +61,10 @@ void UpdateState(void)
 		UpdateFog();
 
 		break;
+	case GAME_INTRO:
 	case GAME_CLEAR:
-		break;
 	case GAME_OVER:
+		UpdateGameStage();
 		break;
 	}
 }
@@ -65,8 +72,6 @@ void UpdateState(void)
 void Draw_State(void) 
 {
 	switch (state) {
-	case GAME_INTRO:
-		break;
 	case GAME_PLAY:
 
 		DrawMap();
@@ -78,15 +83,18 @@ void Draw_State(void)
 		DrawFog();
 
 		break;
+	case GAME_INTRO:
 	case GAME_CLEAR:
-		break;
 	case GAME_OVER:
+		DrawGameStage();
 		break;
 	}
 }
 
 void UninitState(void)
 {
+	UninitGameStage();
+
 	UninitMap();
 	UninitWall();
 

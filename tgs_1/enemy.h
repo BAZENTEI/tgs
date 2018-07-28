@@ -17,7 +17,7 @@
 #define ENEMY_ANIM_PATTERN_NUM			(ENEMY_TEXTURE_PATTERN_DIVIDE_X*ENEMY_TEXTURE_PATTERN_DIVIDE_Y)	// アニメーションパターン数
 #define ENEMY_TIME_ANIMATION			(4)	// アニメーションの切り替わるカウント
 
-#define ENEMY_MAX						(10)
+#define ENEMY_MAX						(20)
 
 typedef struct {
 
