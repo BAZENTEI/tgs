@@ -12,6 +12,7 @@
 #define MAP_ENEMY				0x2
 #define MAP_PLAYER				0x4
 #define MAP_EXIT				0x8
+#define MAP_FINISH				0x10
 
 #define MAP_BLOCK_SIZE			32
 #define MAP_TEXTURE				_T("data/texture/map.png")
@@ -28,6 +29,8 @@ void DrawMap(void);
 void UninitMap(void);
 
 MAP* GetMap(void);
+MAP* GetMap(int id);
+int GetMapId(void);
 
 void ChangeMap(int id);
 

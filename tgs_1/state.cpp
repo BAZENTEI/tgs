@@ -75,7 +75,7 @@ void Draw_State(void)
 		DrawPlayer();
 		DrawEnemy();
 
-		// DrawFog();
+		DrawFog();
 
 		break;
 	case GAME_CLEAR:

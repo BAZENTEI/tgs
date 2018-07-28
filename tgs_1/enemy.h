@@ -24,6 +24,7 @@ typedef struct {
 	BOOL					use;						// 出るかどうか
 	INT						x;
 	INT						y;
+	INT						nMap;
 
 	UINT					nCountAnim;					// アニメーションカウント
 

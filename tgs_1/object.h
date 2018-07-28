@@ -6,6 +6,7 @@
 
 #define EXIT_TEXTURE		_T("data/texture/exit.png")
 #define WALL_TEXTURE		_T("data/texture/wall.png")
+#define FINISH_TEXTURE		_T("data/texture/monkey2.png")
 
 HRESULT InitWall(void);
 void UpdateWall(void);

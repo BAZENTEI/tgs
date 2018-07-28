@@ -28,6 +28,7 @@ typedef struct{
 
 	int						x;
 	int						y;
+	int						nMap;
 
 	int						nCountAnim;					// アニメーションカウント
 } PLAYER;

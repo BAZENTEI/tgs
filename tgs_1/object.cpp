@@ -3,6 +3,7 @@
 
 static LPDIRECT3DTEXTURE9	g_pD3DTextureWall = NULL;			// テクスチャへのポリゴン
 static LPDIRECT3DTEXTURE9	g_pD3DTextureExit = NULL;			// テクスチャへのポリゴン
+static LPDIRECT3DTEXTURE9	g_pD3DTextureFinish = NULL;			// テクスチャへのポリゴン
 
 static VERTEX_2D			g_vertexWkObj[NUM_VERTEX];
 
@@ -33,15 +34,23 @@ HRESULT InitWall(void)
 	g_vertexWkObj[2].tex = D3DXVECTOR2(0.0f, 1.0f);
 	g_vertexWkObj[3].tex = D3DXVECTOR2(1.0f, 1.0f);
 
-	// テクスチャの読み込み
-	D3DXCreateTextureFromFile(pDevice,
-		WALL_TEXTURE,
-		&g_pD3DTextureWall);
+	if (!g_pD3DTextureFinish) {
+		D3DXCreateTextureFromFile(pDevice,
+			FINISH_TEXTURE,
+			&g_pD3DTextureFinish);
+	}
 
-	// テクスチャの読み込み
-	D3DXCreateTextureFromFile(pDevice,
-		EXIT_TEXTURE,
-		&g_pD3DTextureExit);
+	if (!g_pD3DTextureWall) {
+		D3DXCreateTextureFromFile(pDevice,
+			WALL_TEXTURE,
+			&g_pD3DTextureWall);
+	}
+
+	if (!g_pD3DTextureExit) {
+		D3DXCreateTextureFromFile(pDevice,
+			EXIT_TEXTURE,
+			&g_pD3DTextureExit);
+	}
 
 	return S_OK;
 }
@@ -83,6 +92,11 @@ void DrawWall(void)
 
 				pDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, NUM_POLYGON, g_vertexWkObj, sizeof(VERTEX_2D));
 			}
+			if (map->mapData[i][j] & MAP_FINISH) {
+				pDevice->SetTexture(0, g_pD3DTextureFinish);
+
+				pDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, NUM_POLYGON, g_vertexWkObj, sizeof(VERTEX_2D));
+			}
 		}
 	}
 }
@@ -98,6 +112,11 @@ void UninitWall(void) {
 	{	// テクスチャの開放
 		g_pD3DTextureExit->Release();
 		g_pD3DTextureExit = NULL;
+	}
+	if (g_pD3DTextureFinish != NULL)	//
+	{	// テクスチャの開放
+		g_pD3DTextureFinish->Release();
+		g_pD3DTextureFinish = NULL;
 	}
 }
 

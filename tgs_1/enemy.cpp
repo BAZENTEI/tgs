@@ -6,9 +6,9 @@
 //=============================================================================
 #include "main.h"
 #include "enemy.h"
-#include "input.h"
 #include "map.h"
 #include "player.h"
+#include "state.h"
 
 //*****************************************************************************
 // マクロ定義
@@ -23,6 +23,8 @@ HRESULT MakeVertexEnemy(ENEMY* enemy);
 void SetVertexEnemy(ENEMY* enemy);
 
 void SetTextureEnemy(ENEMY* enemy);
+
+void GameOver(void);
 
 //*****************************************************************************
 // グローバル変数
@@ -47,25 +49,31 @@ HRESULT InitEnemy(void)
 	int n = 0;
 	ENEMY* enemy;
 
-	for (int i = 0, j; i < MAP_SIZE_Y; i++) {
-		for (j = 0; j < MAP_SIZE_X; j++) {
-			if (map->mapData[i][j] & MAP_ENEMY) {
-				if (n < ENEMY_MAX) {
-					enemy = GetEnemy(n);
+	int m = 0;
+	for (m = 0; m < MAP_NUMBER; m++) {
+		map = GetMap(m);
 
-					enemy->x = j;
-					enemy->y = i;
+		for (int i = 0, j; i < MAP_SIZE_Y; i++) {
+			for (j = 0; j < MAP_SIZE_X; j++) {
+				if (map->mapData[i][j] & MAP_ENEMY) {
+					if (n < ENEMY_MAX) {
+						enemy = GetEnemy(n);
 
-					enemy->use = true;
+						enemy->x = j;
+						enemy->y = i;
 
-					enemy->nCountAnim = 2;
+						enemy->use = true;
+						enemy->nMap = m;
 
-					// 頂点情報の作成
-					MakeVertexEnemy(enemy);
+						enemy->nCountAnim = 2;
 
-					map->mapData[i][j] &= ~MAP_ENEMY;
+						// 頂点情報の作成
+						MakeVertexEnemy(enemy);
 
-					n++;
+						map->mapData[i][j] &= ~MAP_ENEMY;
+
+						n++;
+					}
 				}
 			}
 		}
@@ -138,7 +146,7 @@ void UpdateEnemy(void)
 			SetTextureEnemy(enemy);
 		}
 	}
-
+	GameOver();
 }
 
 //=============================================================================
@@ -161,9 +169,12 @@ void DrawEnemy(void)
 	for (int i = 0; i < ENEMY_MAX; i++) {
 		enemy = GetEnemy(i);
 
-		if (enemy->use) {
-			// ポリゴンの描画
-			pDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, NUM_POLYGON, enemy->vtxWk, sizeof(VERTEX_2D));
+		if (enemy->nMap == GetMapId()) {
+
+			if (enemy->use) {
+				// ポリゴンの描画
+				pDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, NUM_POLYGON, enemy->vtxWk, sizeof(VERTEX_2D));
+			}
 		}
 	}
 }
@@ -233,4 +244,15 @@ void SetTextureEnemy(ENEMY* enemy)
 	enemy->vtxWk[1].tex = D3DXVECTOR2(sizeX + x, y);
 	enemy->vtxWk[2].tex = D3DXVECTOR2(x, y + sizeY);
 	enemy->vtxWk[3].tex = D3DXVECTOR2(sizeX + x, y + sizeY);
+}
+
+void GameOver(void)
+{
+	PLAYER* player = GetPlayer(0);
+	for (int i = 0; i < ENEMY_MAX; i++) {
+		ENEMY* enemy = GetEnemy(i);
+		if (enemy->use && enemy->nMap == player->nMap && (enemy->x == player->x) && (enemy->y == player->y)) {
+			SetState(GAME_OVER);
+		}
+	}
 }

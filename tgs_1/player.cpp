@@ -10,6 +10,7 @@
 #include "player.h"
 #include "input.h"
 #include "sound.h"
+#include "state.h"
 
 //*****************************************************************************
 // マクロ定義
@@ -23,6 +24,8 @@ HRESULT MakeVertexPlayer(void);
 
 void SetVertexPlayer(void);
 void SetTexturePlayer( int cntPattern );
+
+BOOL Escaped();
 
 //*****************************************************************************
 // グローバル変数
@@ -49,6 +52,7 @@ HRESULT InitPlayer(void)
 
 	player->x = 0;
 	player->y = 0;
+	player->nMap = 0;
 
 	MAP* map = GetMap();
 
@@ -145,12 +149,12 @@ void UpdatePlayer(void)
 		}
 	}
 
-
-
 	SetFog(player->x, player->y);
 
 	SetVertexPlayer();
 	SetTexturePlayer(player->nCountAnim);
+
+	Escaped();
 }
 
 //=============================================================================
@@ -241,4 +245,26 @@ void SetTexturePlayer( int cntPattern )
 	g_vertexWk[1].tex = D3DXVECTOR2(sizeX + x, y);
 	g_vertexWk[2].tex = D3DXVECTOR2(x, y + sizeY);
 	g_vertexWk[3].tex = D3DXVECTOR2(sizeX + x, y + sizeY);
+}
+
+BOOL Escaped()
+{
+	PLAYER* player = GetPlayer(0);
+
+	MAP* map = GetMap();
+
+	if (map->mapData[player->y][player->x] & MAP_EXIT) {
+		int id = GetMapId();
+
+		if (++id < MAP_NUMBER) {
+			ChangeMap(id);
+			player->nMap = id;
+		}
+		else {
+			SetState(GAME_CLEAR);
+		}
+
+		return TRUE;
+	}
+	return FALSE;
 }
