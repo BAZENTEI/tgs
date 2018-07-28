@@ -15,6 +15,7 @@ STATE state = GAME_INTRO;
 
 static LPDIRECTSOUNDBUFFER8 pSoundBuffer = NULL;
 
+static LPDIRECTSOUNDBUFFER8 pEnd = NULL;
 
 HRESULT InitState(void)
 {
@@ -63,8 +64,19 @@ void UpdateState(void)
 		break;
 	case GAME_INTRO:
 	case GAME_CLEAR:
+		UpdateGameStage();
+		break;
 	case GAME_OVER:
 		UpdateGameStage();
+		pSoundBuffer->Stop();
+
+		if (!pEnd) {
+			pEnd = LoadSound(SE_DEAD);
+			if (pEnd) {
+				PlaySound(pEnd, E_DS8_FLAG_NONE);
+
+			}
+		}
 		break;
 	}
 }

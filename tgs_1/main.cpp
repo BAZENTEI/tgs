@@ -15,7 +15,7 @@
 // マクロ定義
 //*****************************************************************************
 #define CLASS_NAME			_T("AppClass")				// ウインドウのクラス名
-#define WINDOW_NAME			_T("アニメーション")		// ウインドウのキャプション名
+#define WINDOW_NAME			_T("Monkey Couple")		// ウインドウのキャプション名
 
 #define FRAME_RATE			(1000/60)
 #define TIMER_ID			1
