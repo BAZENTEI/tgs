@@ -10,7 +10,7 @@
 const TCHAR* c_soundFilename[] = {
 	_T("data/sound/BGM.wav"),
 	_T("data/sound/DEAD.wav"),
-	_T("data/sound/SE.wav"),
+	_T("data/sound/WALK.wav"),
 };
 
 // ƒOƒ[ƒoƒ‹•Ï”

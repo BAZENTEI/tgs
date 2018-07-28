@@ -63,7 +63,7 @@ HRESULT InitPlayer(void)
 		}
 	}
 
-	player->nCountAnim = 3;
+	player->nCountAnim = 2;
 
 	// ’¸“_î•ñ‚Ìì¬
 	MakeVertexPlayer();

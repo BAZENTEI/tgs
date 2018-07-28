@@ -7,11 +7,7 @@
 #include "main.h"
 
 #include "enemy.h"
-#include "fog.h"
 #include "input.h"
-#include "map.h"
-#include "player.h"
-#include "score.h"
 #include "sound.h"
 #include "state.h"
 
@@ -82,6 +78,8 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 	};
 	HWND		hWnd;
 	MSG			msg;
+
+	srand((UINT)time(NULL));
 	
 	// ウィンドウクラスの登録
 	RegisterClassEx(&wcex);
@@ -107,12 +105,6 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 
 	// 入力処理の初期化
 	InitInput(hInstance, hWnd);
-
-	LPDIRECTSOUNDBUFFER8 pSoundBuffer = LoadSound(BGM_00);
-
-	if (pSoundBuffer) {
-		PlaySound(pSoundBuffer, E_DS8_FLAG_LOOP);
-	}
 
 	// タイマー設定
 	// SetTimer(hWnd, TIMER_ID, FRAME_RATE, NULL);

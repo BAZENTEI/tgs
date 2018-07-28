@@ -3,24 +3,33 @@
 #include "fog.h"
 #include "input.h"
 #include "map.h"
+#include "object.h"
 #include "player.h"
 #include "score.h"
 #include "sound.h"
 #include "state.h"
-#include "wall.h"
 
 STATE state = GAME_PLAY;
 
 HRESULT InitState(void)
 {
+	LPDIRECTSOUNDBUFFER8 pSoundBuffer = LoadSound(BGM_00);
+
 	switch (state) {
 	case GAME_INTRO:
 		break;
 	case GAME_PLAY:
+
+		if (pSoundBuffer) {
+			PlaySound(pSoundBuffer, E_DS8_FLAG_LOOP);
+		}
+
 		InitMap();
 		InitWall();
 
 		InitPlayer();
+		InitEnemy();
+
 		InitFog();
 		break;
 	case GAME_CLEAR:
@@ -42,6 +51,7 @@ void UpdateState(void)
 		UpdateMap();
 		UpdateWall();
 		UpdatePlayer();
+		UpdateEnemy();
 		UpdateFog();
 
 		break;
@@ -63,6 +73,8 @@ void Draw_State(void)
 		DrawWall();
 
 		DrawPlayer();
+		DrawEnemy();
+
 		// DrawFog();
 
 		break;
@@ -79,6 +91,7 @@ void UninitState(void)
 	UninitWall();
 
 	UninitPlayer();
+	UninitEnemy();
 
 	UninitFog();
 }

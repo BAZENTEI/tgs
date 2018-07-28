@@ -50,6 +50,7 @@ HRESULT InitMap(void)
 
 void UpdateMap(void)
 {
+	
 }
 
 void DrawMap(void)
