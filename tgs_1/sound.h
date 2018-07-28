@@ -10,8 +10,8 @@
 enum
 {	// サウンド通しナンバー
 	BGM_00,
-	SE_00,
-	SE_01,
+	SE_DEAD,
+	SE_WALK,
 	SOUND_MAX
 };
 

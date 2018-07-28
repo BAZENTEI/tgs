@@ -6,14 +6,14 @@
 //=============================================================================
 #include "main.h"
 
-#include "bullet.h"
 #include "enemy.h"
-#include "guage.h"
+#include "fog.h"
 #include "input.h"
 #include "map.h"
 #include "player.h"
 #include "score.h"
 #include "sound.h"
+#include "state.h"
 
 //*****************************************************************************
 // マクロ定義
@@ -36,9 +36,6 @@ HRESULT Init(HWND hWnd, BOOL bWindow);
 void Uninit(void);
 void Update(void);
 void Draw(void);
-
-void CollisionDetection(void);
-
 
 #ifdef _DEBUG
 void DrawFPS(void);
@@ -114,7 +111,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 	LPDIRECTSOUNDBUFFER8 pSoundBuffer = LoadSound(BGM_00);
 
 	if (pSoundBuffer) {
-		PlaySound(pSoundBuffer, 0);
+		PlaySound(pSoundBuffer, E_DS8_FLAG_LOOP);
 	}
 
 	// タイマー設定
@@ -325,8 +322,7 @@ HRESULT Init(HWND hWnd, BOOL bWindow)
 	// プレイヤーの初期化
 	InitSound(hWnd);
 
-	InitMap();
-	InitPlayer();
+	InitState();
 
 	return S_OK;
 }
@@ -346,18 +342,13 @@ void Uninit(void)
 		g_pD3D->Release();
 	}
 
-	// ポリゴンの終了処理
-	UninitSound();
-	//UninitBullet();
-
-	UninitMap();
-
-	UninitPlayer();
-	//UninitEnemy();
-	//UninitScore();
-	
 	// 入力処理の終了処理
 	UninitInput();
+	// ポリゴンの終了処理
+	UninitSound();
+
+	UninitState();
+	
 }
 
 //=============================================================================
@@ -368,15 +359,7 @@ void Update(void)
 	// 入力の更新処理
 	UpdateInput();
 
-	// ポリゴンの更新処理
-	//UpdateBullet();
-	UpdateMap();
-
-	UpdatePlayer();
-	//UpdateEnemy();
-	//UpdateScore();
-
-	//CollisionDetection();
+	UpdateState();
 }
 
 //=============================================================================
@@ -391,17 +374,11 @@ void Draw(void)
 	if(SUCCEEDED(g_pD3DDevice->BeginScene()))
 	{
 		// ポリゴンの描画処理
-		// DrawBullet();
-		DrawMap();
-
-		DrawPlayer();
-		// DrawEnemy();
-		// DrawScore();
-
+		Draw_State();
 
 		#ifdef _DEBUG
 		// FPS表示
-		DrawFPS();
+		// DrawFPS();
 		#endif
 
 		// Direct3Dによる描画の終了
@@ -412,37 +389,6 @@ void Draw(void)
 	}
 	// バックバッファとフロントバッファの入れ替え
 	g_pD3DDevice->Present(NULL, NULL, NULL, NULL);
-}
-
-void CollisionDetection(void)
-{
-	for (UINT i = 0; i < ENEMY_MAX; i++) {
-
-		ENEMY* enemy = GetEnemy(i);
-
-		if (enemy->use) {
-
-			for (UINT j = 0; j < BULLET_MAX; j++) {
-
-				BULLET* bullet = GetBullet(j);
-
-				if (bullet->use) {
-					// Collision Check
-
-					if (bullet->pos.x <= enemy->pos.x + ENEMY_TEXTURE_SIZE_X &&
-						enemy->pos.x <= bullet->pos.x + BULLET_TEXTURE_SIZE_X &&
-						bullet->pos.y <= enemy->pos.y + ENEMY_TEXTURE_SIZE_Y &&
-						enemy->pos.y <= bullet->pos.y + BULLET_TEXTURE_SIZE_Y
-						) 
-					{
-						RemoveBullet(bullet);
-						RemoveEnemy(enemy);
-						AddScore(enemy->value);
-					}
-				}
-			}
-		}
-	}
 }
 
 //=============================================================================

@@ -48,5 +48,4 @@ typedef struct
 
 LPDIRECT3DDEVICE9 GetDevice(void);		// デバイス取得関数
 
-
 #endif

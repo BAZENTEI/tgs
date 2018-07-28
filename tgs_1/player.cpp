@@ -5,10 +5,11 @@
 //
 //=============================================================================
 #include "main.h"
+#include "fog.h"
 #include "map.h"
 #include "player.h"
-#include "bullet.h"
 #include "input.h"
+#include "sound.h"
 
 //*****************************************************************************
 // マクロ定義
@@ -22,9 +23,6 @@ HRESULT MakeVertexPlayer(void);
 
 void SetVertexPlayer(void);
 void SetTexturePlayer( int cntPattern );
-
-void FireBullet(void);
-
 
 //*****************************************************************************
 // グローバル変数
@@ -52,8 +50,20 @@ HRESULT InitPlayer(void)
 	player->x = 0;
 	player->y = 0;
 
-	player->nCountAnim = 0;
-	player->nPatternAnim = 0;
+	MAP* map = GetMap();
+
+	for (int i = 0, j; i < MAP_SIZE_Y; i++) {
+		for (j = 0; j < MAP_SIZE_X; j++) {
+			if (map->mapData[i][j] & MAP_PLAYER) {
+				player->x = j;
+				player->y = i;
+
+				map->mapData[i][j] &= ~MAP_PLAYER;
+			}
+		}
+	}
+
+	player->nCountAnim = 3;
 
 	// 頂点情報の作成
 	MakeVertexPlayer();
@@ -89,19 +99,27 @@ void UpdatePlayer(void)
 
 	MAP*	map = GetMap();
 
+	LPDIRECTSOUNDBUFFER8 pSoundBuffer = LoadSound(SE_WALK);
+
 	// アニメーション
 	if (GetKeyboardTrigger(DIK_RIGHT)) {
 		if ((player->x + 1 < MAP_SIZE_X) && !(map->mapData[player->y][player->x + 1] & MAP_WALL)) {
 			player->x += 1;
 			player->nCountAnim = 1;
 
-			RemoveFog();
+			if (pSoundBuffer) {
+				PlaySound(pSoundBuffer, E_DS8_FLAG_NONE);
+			}
 		}
 	}
 	else if (GetKeyboardTrigger(DIK_LEFT)) {
 		if ((player->x - 1 >= 0) && !(map->mapData[player->y][player->x - 1] & MAP_WALL)) {
 			player->x -= 1;
 			player->nCountAnim = 3;
+
+			if (pSoundBuffer) {
+				PlaySound(pSoundBuffer, E_DS8_FLAG_NONE);
+			}
 		}
 	}
 
@@ -109,6 +127,10 @@ void UpdatePlayer(void)
 		if ((player->y + 1 < MAP_SIZE_Y) && !(map->mapData[player->y + 1][player->x] & MAP_WALL)) {
 			player->y += 1;
 			player->nCountAnim = 2;
+
+			if (pSoundBuffer) {
+				PlaySound(pSoundBuffer, E_DS8_FLAG_NONE);
+			}
 		}
 	}
 	else if (GetKeyboardTrigger(DIK_UP)) {
@@ -116,8 +138,16 @@ void UpdatePlayer(void)
 		if ((player->y - 1 >= 0) && !(map->mapData[player->y - 1][player->x] & MAP_WALL)) {
 			player->y -= 1;
 			player->nCountAnim = 0;
+
+			if (pSoundBuffer) {
+				PlaySound(pSoundBuffer, E_DS8_FLAG_NONE);
+			}
 		}
 	}
+
+
+
+	SetFog(player->x, player->y);
 
 	SetVertexPlayer();
 	SetTexturePlayer(player->nCountAnim);
